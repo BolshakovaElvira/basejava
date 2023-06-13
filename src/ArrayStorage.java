@@ -3,7 +3,7 @@
  */
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
-    public static int size = 0;
+    private static int size;
 
     void clear() {
         for (int i = 0; i < size; i++) {
@@ -27,18 +27,15 @@ public class ArrayStorage {
     }
 
     void delete(String uuid) {
-        Resume[] resumesCopy = new Resume[size() - 1];
-        int k = 0;
+        int index=0;
         for (int i = 0; i < size; i++) {
             if (storage[i].uuid.equals(uuid)) {
-                continue;
-            } else {
-                resumesCopy[k] = storage[i];
-                k++;
+                index=i;
+                size--;
+                break;
             }
         }
-        size--;
-        storage = resumesCopy.clone();
+        System.arraycopy(storage, index + 1, storage, index, size);
     }
 
     /**
@@ -46,10 +43,9 @@ public class ArrayStorage {
      */
     Resume[] getAll() {
         Resume[] resumes = new Resume[size];
-        int k = 0;
+
         for (int i = 0; i < size; i++) {
-            resumes[k] = storage[i];
-            k++;
+            resumes[i] = storage[i];
         }
         return resumes;
     }
