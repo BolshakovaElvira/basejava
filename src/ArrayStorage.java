@@ -3,23 +3,17 @@
  */
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
-    Resume fakeResume = new Resume();
-
-
-    int size = size();
-    int lastIndex = 0;
+    public static int size = 0;
 
     void clear() {
-        for (int i = 0; i < lastIndex; i++) {
+        for (int i = 0; i < size; i++) {
             storage[i] = null;
         }
         size = 0;
-        lastIndex = 0;
     }
 
     void save(Resume r) {
-        storage[lastIndex] = r;
-        lastIndex++;
+        storage[size] = r;
         size++;
     }
 
@@ -29,44 +23,38 @@ public class ArrayStorage {
                 return storage[i];
             }
         }
-        fakeResume.uuid = "doesnt exit";
-        return fakeResume;
-
+        return null;
     }
 
     void delete(String uuid) {
-        for (int i = 0; i < lastIndex; i++) {
+        Resume[] resumesCopy = new Resume[size() - 1];
+        int k = 0;
+        for (int i = 0; i < size; i++) {
             if (storage[i].uuid.equals(uuid)) {
-                storage[i] = null;
-                size--;
-
+                continue;
+            } else {
+                resumesCopy[k] = storage[i];
+                k++;
             }
         }
+        size--;
+        storage = resumesCopy.clone();
     }
 
     /**
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-
-        Resume[] newResume = new Resume[size];
+        Resume[] resumes = new Resume[size];
         int k = 0;
-        for (int i = 0; i < lastIndex; i++) {
-            if (storage[i] != null) {
-                newResume[k] = storage[i];
-                k++;
-            }
+        for (int i = 0; i < size; i++) {
+            resumes[k] = storage[i];
+            k++;
         }
-        return newResume;
+        return resumes;
     }
 
     int size() {
-        int size = 0;
-        for (int i = 0; i < storage.length; i++) {
-            if (storage[i] != null) {
-                size++;
-            }
-        }
         return size;
     }
 }
