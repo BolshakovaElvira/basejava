@@ -20,7 +20,7 @@ public class ArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void changeDeletedResumes(int index) {
+    protected void fillDeletedResume(int index) {
         storage[index] = storage[size - 1];
     }
 

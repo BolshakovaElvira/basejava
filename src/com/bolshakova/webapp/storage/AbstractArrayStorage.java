@@ -1,5 +1,8 @@
 package com.bolshakova.webapp.storage;
 
+import com.bolshakova.webapp.exception.ExistStorageException;
+import com.bolshakova.webapp.exception.NotExistStorageException;
+import com.bolshakova.webapp.exception.StorageException;
 import com.bolshakova.webapp.model.Resume;
 
 import java.util.Arrays;
@@ -19,26 +22,29 @@ public abstract class AbstractArrayStorage implements Storage {
         return size;
     }
 
-    public void save(Resume resume) {
+    public final void save(Resume resume) {
         int index = getIndex(resume.getUuid());
         if (size > STORAGE_LIMIT) {
-            System.out.println("Невозможно добавить резюме c uuid = " + resume.getUuid() + ". База переполнена!");
+            throw new StorageException("База переполнена!",resume.getUuid());
+            //System.out.println("Невозможно добавить резюме c uuid = " + resume.getUuid() + ". База переполнена!");
         } else if ((index == 0 && size > 0) || index > 0) {
-            System.out.println("Невозможно добавить резюме c uuid = " + resume.getUuid() + ". Такое резюме уже существует в базе!");
+            throw new ExistStorageException(resume.getUuid());
+            //System.out.println("Невозможно добавить резюме c uuid = " + resume.getUuid() + ". Такое резюме уже существует в базе!");
         } else {
             addResume(resume, index);
             size++;
         }
     }
 
-    public void delete(String uuid) {
+    public final void delete(String uuid) {
         int index = getIndex(uuid);
         if (index >= 0) {
-            changeDeletedResumes(index);
+            fillDeletedResume(index);
             storage[size - 1] = null;
             size--;
         } else {
-            System.out.println("Невозможно удалить резюме c uuid = " + uuid + "! Резюме отсутсвует!");
+            throw new NotExistStorageException(uuid);
+            //System.out.println("Невозможно удалить резюме c uuid = " + uuid + "! Резюме отсутсвует!");
         }
     }
 
@@ -49,28 +55,29 @@ public abstract class AbstractArrayStorage implements Storage {
         return Arrays.copyOf(storage, size);
     }
 
-    public void update(Resume resume) {
+    public final void update(Resume resume) {
         int index = getIndex(resume.getUuid());
         if (index < 0) {
-            System.out.println("Невозможно обновить резюме c uuid = " + resume.getUuid() + "! Резюме отсутсвует!");
+            throw new NotExistStorageException(resume.getUuid());
+            //System.out.println("Невозможно обновить резюме c uuid = " + resume.getUuid() + "! Резюме отсутсвует!");
         } else {
             storage[index] = resume;
         }
     }
 
-    public Resume get(String uuid) {
+    public final Resume get(String uuid) {
         int index = getIndex(uuid);
         if (index >= 0) {
             return storage[index];
         } else {
-            System.out.println("Невозможно получить резюме c uuid = " + uuid + "! Резюме отсутсвует!");
+            throw new NotExistStorageException(uuid);
+            //System.out.println("Невозможно получить резюме c uuid = " + uuid + "! Резюме отсутсвует!");
         }
-        return null;
     }
 
     protected abstract int getIndex(String uuid);
 
-    protected abstract void changeDeletedResumes(int index);
+    protected abstract void fillDeletedResume(int index);
 
     protected abstract void addResume(Resume resume, int index);
 
