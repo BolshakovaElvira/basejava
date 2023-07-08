@@ -1,4 +1,5 @@
 package com.bolshakova.webapp.storage;
+
 import com.bolshakova.webapp.exception.ExistStorageException;
 import com.bolshakova.webapp.exception.NotExistStorageException;
 import com.bolshakova.webapp.exception.StorageException;
@@ -9,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AbstractArrayStorageTest {
+abstract class AbstractArrayStorageTest {
     private final Storage storage;
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
@@ -111,13 +112,15 @@ class AbstractArrayStorageTest {
     }
 
     @Test
-    public void saveOverflow() throws Exception {
-
-        for (int i = 3; i <= AbstractArrayStorage.STORAGE_LIMIT; i++) {
+    public void testSaveOverflow() throws Exception {
+        storage.clear();
+        for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
             storage.save(new Resume());
-            assertThrows(StorageException.class,
-                    Assertions::fail);
         }
+        assertThrows(StorageException.class,
+                () -> {
+                    storage.save(new Resume());
+                });
     }
 
     private void assertSize(int size) {

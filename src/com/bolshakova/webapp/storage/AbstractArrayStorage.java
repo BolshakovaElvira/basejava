@@ -24,7 +24,7 @@ public abstract class AbstractArrayStorage implements Storage {
 
     public final void save(Resume resume) {
         int index = getIndex(resume.getUuid());
-        if (size > STORAGE_LIMIT) {
+        if (size >= STORAGE_LIMIT) {
             throw new StorageException("База переполнена!",resume.getUuid());
             //System.out.println("Невозможно добавить резюме c uuid = " + resume.getUuid() + ". База переполнена!");
         } else if ((index == 0 && size > 0) || index > 0) {
